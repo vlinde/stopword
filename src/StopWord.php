@@ -9,7 +9,7 @@ class StopWord
 {
     public function filter($string , $words_longer_than = 2 , $number_of_words = 4, $locale = 'en')
     {
-        $char_map = config('search-keywords.' . $locale) ?? [];
+        $char_map = config('stopword.' . $locale) ?? [];
 
         $replace_exceptions = ['php' , 'js', 'bäckerei'];
 
@@ -31,26 +31,28 @@ class StopWord
 
         $count = 0;
 
-        if(count($clean)) {
-            $combinations = Functions::powerSet($clean);
+        if(empty($clean)) {
+            return $count;
+        }
 
-            $count = count($combinations);
+        $combinations = Functions::powerSet($clean);
 
-            foreach($combinations as $combination) {
-                if($existing_keyword = Keyword::where('key' , $combination)->first()) {
-                    $existing_keyword->counter += 1;
+        $count = count($combinations);
 
-                    $existing_keyword->withoutSyncingToSearch(function () use ($existing_keyword) {
-                        $existing_keyword->save();
-                    });
-                } else {
-                    $new_keyword = new Keyword();
-                    $new_keyword->key = $combination;
+        foreach($combinations as $combination) {
+            if($existing_keyword = Keyword::where('key' , $combination)->first()) {
+                $existing_keyword->counter += 1;
 
-                    $new_keyword->withoutSyncingToSearch(function () use ($new_keyword) {
-                        $new_keyword->save();
-                    });
-                }
+                $existing_keyword->withoutSyncingToSearch(function () use ($existing_keyword) {
+                    $existing_keyword->save();
+                });
+            } else {
+                $new_keyword = new Keyword();
+                $new_keyword->key = $combination;
+
+                $new_keyword->withoutSyncingToSearch(function () use ($new_keyword) {
+                    $new_keyword->save();
+                });
             }
         }
 

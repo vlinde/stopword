@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Console\Commands\Elastic;
+namespace Vlinde\StopWord\Commands\Elastic;
 
-use App\Models\Keyword;
 use Illuminate\Console\Command;
 use Sleimanx2\Plastic\Facades\Plastic;
+use Vlinde\StopWord\Models\Keyword;
 
 class ImportKeywordsToES extends Command
 {
@@ -39,32 +39,32 @@ class ImportKeywordsToES extends Command
      */
     public function handle()
     {
-	    $offset = $this->argument('offset');
-	
-	    if(is_null($offset)) {
-		    $offset = 0;
-	    }
-	
-	    $limit = 5000;
-	    $this->processKeywords($offset , $limit);
-	    $offset += $limit;
-	    $this->info(memory_get_usage());
-	    $this->call('import:es:keywords' , ['offset' => $offset]);
+        $offset = $this->argument('offset');
+
+        if (is_null($offset)) {
+            $offset = 0;
+        }
+
+        $limit = 5000;
+        $this->processKeywords($offset, $limit);
+        $offset += $limit;
+        $this->info(memory_get_usage());
+        $this->call('import:es:keywords', ['offset' => $offset]);
     }
-	
-	
-	protected function processKeywords($offset , $limit)
-	{
-		$keywords = Keyword::offset($offset)->limit($limit)->get();
-		
-		if(count($keywords)) {
-			Plastic::persist()->bulkSave($keywords);
-			$max = $offset + $limit;
-			$this->info("Indexed keywords to ES  from {$offset} to {$max}.");
-			unset($keywords);
-		} else {
-			$this->info('Operation finished');
-			exit();
-		}
-	}
+
+
+    protected function processKeywords($offset, $limit)
+    {
+        $keywords = Keyword::offset($offset)->limit($limit)->get();
+
+        if (empty($keywords)) {
+            $this->info('Operation finished');
+            exit();
+        }
+
+        Plastic::persist()->bulkSave($keywords);
+        $max = $offset + $limit;
+        $this->info("Indexed keywords to ES  from {$offset} to {$max}.");
+        unset($keywords);
+    }
 }
