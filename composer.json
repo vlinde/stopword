@@ -13,7 +13,7 @@
     "keywords": ["Laravel", "StopWord"],
     "require": {
         "illuminate/support": "~5|~6|~7",
-        "mxp100/plastic": "^0.5.4"
+        "mxp100/plastic": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0",
