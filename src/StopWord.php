@@ -46,12 +46,12 @@ class StopWord
         $count = count($combinations);
 
         foreach ($combinations as $combination) {
-            if ($existing_keyword = Keyword::where([
-                'key' => $combination,
-                'locale' => $locale
-            ])->first()) {
-                $existing_keyword->counter += 1;
+            $existing_keyword = Keyword::where([
+                'key' => $combination
+            ])->first();
 
+            if (isset($existing_keyword) && empty($existing_keyword->locale)) {
+                $existing_keyword->counter += 1;
                 $existing_keyword->withoutSyncingToSearch(function () use ($existing_keyword) {
                     $existing_keyword->save();
                 });
