@@ -9,9 +9,9 @@ class StopWord
 {
     public function filter($string, $words_longer_than = 2, $number_of_words = 4, $locale = 'en')
     {
-        $path =  __DIR__ . '/../stopwords/' . $locale . '.php';
+        $path = __DIR__ . '/../stopwords/' . $locale . '.php';
 
-        if(!file_exists($path)) {
+        if (!file_exists($path)) {
             return 0;
         }
 
@@ -46,7 +46,10 @@ class StopWord
         $count = count($combinations);
 
         foreach ($combinations as $combination) {
-            if ($existing_keyword = Keyword::where('key', $combination)->first()) {
+            if ($existing_keyword = Keyword::where([
+                'key' => $combination,
+                'locale' => $locale
+            ])->first()) {
                 $existing_keyword->counter += 1;
 
                 $existing_keyword->withoutSyncingToSearch(function () use ($existing_keyword) {
@@ -55,6 +58,7 @@ class StopWord
             } else {
                 $new_keyword = new Keyword();
                 $new_keyword->key = $combination;
+                $new_keyword->locale = $locale;
 
                 $new_keyword->withoutSyncingToSearch(function () use ($new_keyword) {
                     $new_keyword->save();
