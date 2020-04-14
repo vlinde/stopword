@@ -19,7 +19,7 @@ class StopWord
             return 0;
         }
 
-        $char_map = require_once $path;
+        $char_map = require $path;
 
         $replace_exceptions = ['php', 'js', 'bäckerei'];
 
@@ -50,15 +50,44 @@ class StopWord
         $count = count($combinations);
 
         foreach ($combinations as $combination) {
-            $existing_keyword = Keyword::where([
+            $existing_keywords = Keyword::where([
                 'key' => $combination
-            ])->first();
+            ])->get();
 
-            if (isset($existing_keyword) && empty($existing_keyword->locale)) {
-                $existing_keyword->counter += 1;
-                $existing_keyword->withoutSyncingToSearch(function () use ($existing_keyword) {
-                    $existing_keyword->save();
-                });
+            if($existing_keywords->isNotEmpty()) {
+                $empty_locale_keyword = $existing_keywords->where('locale', '=', '');
+
+                if($empty_locale_keyword->isNotEmpty()) {
+                    $existing_keyword = $empty_locale_keyword->first();
+
+                    $existing_keyword->counter += 1;
+                    $existing_keyword->withoutSyncingToSearch(function () use ($existing_keyword) {
+                        $existing_keyword->save();
+                    });
+
+                    continue;
+                }
+
+                $exists_locale_keyword = $existing_keywords->where('locale', '=', $locale);
+
+                if($exists_locale_keyword->isEmpty()) {
+
+                    $new_keyword = new Keyword();
+                    $new_keyword->key = $combination;
+                    $new_keyword->locale = $locale;
+
+                    $new_keyword->withoutSyncingToSearch(function () use ($new_keyword) {
+                        $new_keyword->save();
+                    });
+                } else {
+                    $existing_keyword = $exists_locale_keyword->first();
+
+                    $existing_keyword->counter += 1;
+
+                    $existing_keyword->withoutSyncingToSearch(function () use ($existing_keyword) {
+                        $existing_keyword->save();
+                    });
+                }
             } else {
                 $new_keyword = new Keyword();
                 $new_keyword->key = $combination;
