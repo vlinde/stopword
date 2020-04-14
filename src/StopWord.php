@@ -7,9 +7,13 @@ use Vlinde\StopWord\Models\Keyword;
 
 class StopWord
 {
-    public function filter($string, $words_longer_than = 2, $number_of_words = 4, $locale = 'en')
+    protected $defaultLocale = 'en';
+
+    public function filter($string, $words_longer_than = 2, $number_of_words = 4, $locale = '')
     {
-        $path = __DIR__ . '/../stopwords/' . $locale . '.php';
+        $stopWordLocale = !empty($locale) ? $locale : $this->defaultLocale;
+
+        $path = __DIR__ . '/../stopwords/' . $stopWordLocale . '.php';
 
         if (!file_exists($path)) {
             return 0;
