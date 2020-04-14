@@ -3,7 +3,7 @@
 namespace Vlinde\StopWord\Commands\Elastic;
 
 use Illuminate\Console\Command;
-use Sleimanx2\Plastic\Facades\Plastic;
+use Vlinde\StopWord\Jobs\KeywordsEsImportJob;
 use Vlinde\StopWord\Models\Keyword;
 
 class ImportKeywordsToES extends Command
@@ -13,7 +13,7 @@ class ImportKeywordsToES extends Command
      *
      * @var string
      */
-    protected $signature = 'import:es:keywords {offset?}';
+    protected $signature = 'stopword:import:es:keywords {offset?} {limit?}';
 
     /**
      * The console command description.
@@ -39,32 +39,32 @@ class ImportKeywordsToES extends Command
      */
     public function handle()
     {
-        $offset = $this->argument('offset');
+        $offset = $this->argument('offset') ?? 0;
+        $limit = $this->argument('limit') ?? 5000;
 
-        if (is_null($offset)) {
-            $offset = 0;
-        }
-
-        $limit = 5000;
         $this->processKeywords($offset, $limit);
-        $offset += $limit;
-        $this->info(memory_get_usage());
-        $this->call('import:es:keywords', ['offset' => $offset]);
-    }
 
+        $this->info('Operation finished');
+    }
 
     protected function processKeywords($offset, $limit)
     {
-        $keywords = Keyword::offset($offset)->limit($limit)->get();
+        $count = Keyword::count();
 
-        if (empty($keywords)) {
-            $this->info('Operation finished');
-            exit();
+        if($offset > 0) {
+            $count -= $offset;
         }
 
-        Plastic::persist()->bulkSave($keywords);
-        $max = $offset + $limit;
-        $this->info("Indexed keywords to ES  from {$offset} to {$max}.");
-        unset($keywords);
+        $chunks = ceil($count / $limit);
+
+        for ($i = 1; $i <= (int)$chunks; $i++) {
+            $job = (new KeywordsEsImportJob($offset, $limit))->onConnection('redis_queue')
+                ->onQueue('high');
+
+            dispatch($job);
+
+            $offset += $limit;
+        }
     }
+
 }

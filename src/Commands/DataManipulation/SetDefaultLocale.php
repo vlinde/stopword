@@ -12,7 +12,7 @@ class SetDefaultLocale extends Command
      *
      * @var string
      */
-    protected $signature = 'set:keyword:default:locale {locale?}';
+    protected $signature = 'stopword:set:keyword:default:locale {locale?}';
 
     /**
      * The console command description.
