@@ -49,10 +49,15 @@ class StopWord
 
         $count = count($combinations);
 
+        $existing_keywords_all = Keyword::where(function($query) use($combinations) {
+            foreach($combinations as $combination) {
+                $query->orWhere('key', '=', $combination);
+            }
+        })->get();
+
         foreach ($combinations as $combination) {
-            $existing_keywords = Keyword::where([
-                'key' => $combination
-            ])->get();
+
+            $existing_keywords = $existing_keywords_all->where('key', '=', $combination);
 
             if($existing_keywords->isNotEmpty()) {
                 $empty_locale_keyword = $existing_keywords->where('locale', '=', '');
