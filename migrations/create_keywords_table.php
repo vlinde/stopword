@@ -15,7 +15,7 @@ class CreateKeywordsTable extends Migration
     {
         Schema::create('keywords', function (Blueprint $table) {
 	        $table->increments('id');
-	        $table->string('key')->unique();
+	        $table->string('key');
 	        $table->string('locale');
 	        $table->integer('counter')->default(1);
         });
