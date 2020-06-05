@@ -2,6 +2,7 @@
 
 namespace Vlinde\StopWord;
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class StopWordServiceProvider extends ServiceProvider
@@ -31,7 +32,7 @@ class StopWordServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/stopword.php', 'stopword');
+        $this->mergeConfigFrom(__DIR__ . '/../config/stopword.php', 'stopword');
 
         // Register the service the package provides.
         $this->app->singleton('stopword', function ($app) {
@@ -58,11 +59,17 @@ class StopWordServiceProvider extends ServiceProvider
     {
         // Publishing the configuration file.
         $this->publishes([
-            __DIR__.'/../config/stopword.php' => config_path('stopword.php'),
+            __DIR__ . '/../config/stopword.php' => config_path('stopword.php'),
         ], 'stopword.config');
 
+        if (!Schema::hasTable('keywords')) {
+            $this->publishes([
+                __DIR__ . '/../migrations/create_keywords_table.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_keywords_table.php'),
+            ], 'migrations');
+        }
+
         $this->publishes([
-            __DIR__ . '/../migrations/create_keywords_table.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_keywords_table.php'),
+            __DIR__ . '/../migrations/add_index_key_to_keywords_table.php' => database_path('migrations/' . date('Y_m_d_His', strtotime(date('Y-m-d H:i:s')) + 1) . '_add_index_key_to_keywords_table.php'),
         ], 'migrations');
 
         // Publishing the views.
