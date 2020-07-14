@@ -108,7 +108,7 @@ class StopWord
         string $locale = null
     ): int
     {
-        $this->cleanWithStopwords($string, $wordsLongerThan, $numberOfWords, $locale);
+        $this->generateCleanCombinations($string, $wordsLongerThan, $numberOfWords, $locale);
 
         $count = 0;
 
