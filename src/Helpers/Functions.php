@@ -3,7 +3,7 @@
 namespace Vlinde\StopWord\Helpers;
 
 class Functions {
-    public static function powerSet($in, $minLength = 1, $filterMinCombinationLength = 2) {
+    public static function powerSet($in, $minLength = 1) {
         $count = count($in);
 
         $members = pow(2, $count);
@@ -16,7 +16,7 @@ class Functions {
             $out = [];
 
             for ($j = 0; $j < $count; $j++) {
-                if ($b[$j] == '1' && strlen($in[$j]) >= $filterMinCombinationLength) {
+                if ($b[$j] == '1') {
                     $out[] = $in[$j];
                 }
             }
