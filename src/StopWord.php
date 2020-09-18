@@ -43,6 +43,9 @@ class StopWord
 
         foreach ($combinations as $combination) {
             $keyword = $keywords->where('key', '=', $combination)
+                ->when(isset($locale), function ($collection) use ($locale) {
+                    return $collection->where('locale', $locale);
+                })
                 ->first();
 
             if (!$keyword) {
