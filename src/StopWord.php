@@ -32,8 +32,12 @@ class StopWord
         $count = 0;
 
         if ($withCombinations) {
-            $combinations = Functions::powerSet($combinations, 1, $wordsLongerThan);
+            $combinations = Functions::powerSet($combinations, 1);
         }
+
+        $combinations = array_filter($combinations, function ($combination) use ($wordsLongerThan) {
+            return strlen($combination) > $wordsLongerThan;
+        });
 
         $keywords = $this->findKeywordsByCombinations($combinations);
 
