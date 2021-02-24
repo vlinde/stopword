@@ -42,14 +42,12 @@ class SetDefaultLocale extends Command
 
         $locale = $this->argument('locale') ?? 'de';
 
-        Keyword::where('locale', '=', '')->chunk(1000, function ($keywords) use ($locale) {
-
-            foreach ($keywords as $key => $keyword) {
-                $keyword->locale = $locale;
-                $keyword->save();
-            }
-
-        });
-
+        Keyword::where('locale', '=', '')
+            ->chunk(1000, function ($keywords) use ($locale) {
+                foreach ($keywords as $key => $keyword) {
+                    $keyword->locale = $locale;
+                    $keyword->save();
+                }
+            });
     }
 }

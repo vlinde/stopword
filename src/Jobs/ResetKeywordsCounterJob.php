@@ -43,13 +43,12 @@ class ResetKeywordsCounterJob implements ShouldQueue
             return;
         }
 
-        $keywords->each(function ($keyword) {
-            $keyword->counter = 0;
+        Keyword::withoutSyncingToSearch(function () use ($keywords) {
+            $keywords->each(function ($keyword) {
+                $keyword->counter = 0;
 
-            $keyword->withoutSyncingToSearch(function () use ($keyword) {
                 $keyword->save();
             });
-
         });
     }
 }

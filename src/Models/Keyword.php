@@ -3,16 +3,14 @@
 namespace Vlinde\StopWord\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Sleimanx2\Plastic\Searchable;
-use Vlinde\StopWord\Models\Traits\General\WithoutSyncingToSearch;
 use Vlinde\StopWord\Models\Traits\Keyword\KeywordSearch;
 
 class Keyword extends Model
 {
-	use Searchable, KeywordSearch, WithoutSyncingToSearch;
+    use KeywordSearch;
 
-    public $syncDocument = true;
     public $timestamps = false;
+
     protected $guarded = [];
 
     /**

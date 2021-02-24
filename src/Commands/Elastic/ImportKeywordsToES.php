@@ -8,21 +8,32 @@ use Vlinde\StopWord\Models\Keyword;
 
 class ImportKeywordsToES extends Command
 {
+    private const DEFAULT_OFFSET = 0;
+    private const DEFAULT_LIMIT = 5000;
+
+    /**
+     * @var string
+     */
+    private $connection;
+
+    /**
+     * @var string
+     */
+    private $queue;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
     protected $signature = 'stopword:import:es:keywords {offset?} {limit?}';
+
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Import keywords to Elasticsearch';
-
-    private $connection;
-    private $queue;
 
     /**
      * Create a new command instance.
@@ -42,17 +53,25 @@ class ImportKeywordsToES extends Command
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
-        $offset = $this->argument('offset') ?? 0;
-        $limit = $this->argument('limit') ?? 5000;
+        $offset = (int)$this->argument('offset') ?: self::DEFAULT_OFFSET;
+        $limit = (int)$this->argument('limit') ?: self::DEFAULT_LIMIT;
 
         $this->processKeywords($offset, $limit);
 
         $this->info('Operation finished');
     }
 
-    protected function processKeywords($offset, $limit)
+    /**
+     * Add keywords in queue
+     *
+     * @param int $offset
+     * @param int $limit
+     *
+     * @return void
+     */
+    protected function processKeywords(int $offset, int $limit): void
     {
         $count = Keyword::count();
 
@@ -70,5 +89,4 @@ class ImportKeywordsToES extends Command
             $offset += $limit;
         }
     }
-
 }

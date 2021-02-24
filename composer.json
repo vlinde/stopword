@@ -12,8 +12,10 @@
     "homepage": "https://github.com/vlinde/stopword",
     "keywords": ["Laravel", "StopWord"],
     "require": {
-        "illuminate/support": "~5|~6|~7",
-        "mxp100/plastic": "dev-master"
+        "illuminate/support": "~5|~6|~7|~8",
+        "babenkoivan/elastic-scout-driver": "^1.2",
+        "babenkoivan/elastic-scout-driver-plus": "^1.18",
+        "laravel/scout": "^8.6"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0",

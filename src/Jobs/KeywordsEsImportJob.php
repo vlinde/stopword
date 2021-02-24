@@ -7,23 +7,29 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Sleimanx2\Plastic\Facades\Plastic;
 use Vlinde\StopWord\Models\Keyword;
 
 class KeywordsEsImportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * @var int
+     */
     public $skip;
+
+    /**
+     * @var int
+     */
     public $take;
 
     /**
      * Create a new job instance.
      *
-     * @param $skip
-     * @param $take
+     * @param int $skip
+     * @param int $take
      */
-    public function __construct($skip, $take)
+    public function __construct(int $skip, int $take)
     {
         $this->skip = $skip;
         $this->take = $take;
@@ -34,7 +40,7 @@ class KeywordsEsImportJob implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $keywords = Keyword::skip($this->skip)
             ->take($this->take)
@@ -44,6 +50,8 @@ class KeywordsEsImportJob implements ShouldQueue
             return;
         }
 
-        Plastic::persist()->bulkSave($keywords);
+        foreach ($keywords as $keyword) {
+            $keyword->touch();
+        }
     }
 }

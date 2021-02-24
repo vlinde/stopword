@@ -122,7 +122,7 @@ class StopWord
             return tap($keyword)->save();
         }
 
-        return $keyword->withoutSyncingToSearch(function () use ($keyword) {
+        return Keyword::withoutSyncingToSearch(function () use ($keyword) {
             return tap($keyword)->save();
         });
     }
@@ -135,7 +135,7 @@ class StopWord
             return tap($keyword)->save();
         }
 
-        return $keyword->withoutSyncingToSearch(function () use ($keyword) {
+        return Keyword::withoutSyncingToSearch(function () use ($keyword) {
             return tap($keyword)->save();
         });
     }

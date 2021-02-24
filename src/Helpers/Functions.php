@@ -2,11 +2,13 @@
 
 namespace Vlinde\StopWord\Helpers;
 
-class Functions {
-    public static function powerSet($in, $minLength = 1) {
+class Functions
+{
+    public static function powerSet($in, $minLength = 1)
+    {
         $count = count($in);
 
-        $members = pow(2, $count);
+        $members = 2 ** $count;
 
         $return = [];
 

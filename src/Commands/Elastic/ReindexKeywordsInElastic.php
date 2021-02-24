@@ -8,22 +8,32 @@ use Vlinde\StopWord\Models\Keyword;
 
 class ReindexKeywordsInElastic extends Command
 {
-    const DEFAULT_OFFSET = 0;
-    const DEFAULT_LIMIT = 5000;
+    private const DEFAULT_OFFSET = 0;
+    private const DEFAULT_LIMIT = 5000;
+
+    /**
+     * @var string
+     */
+    private $connection;
+
+    /**
+     * @var string
+     */
+    private $queue;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
     protected $signature = 'reindex:es:keywords {offset?} {limit?}';
+
     /**
      * The console command description.
      *
      * @var string
      */
     protected $description = 'Reindex keywords in Elasticsearch';
-    private $connection;
-    private $queue;
 
     /**
      * Create a new command instance.
@@ -43,10 +53,10 @@ class ReindexKeywordsInElastic extends Command
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
-        $offset = $this->argument('offset') ?? self::DEFAULT_OFFSET;
-        $limit = $this->argument('limit') ?? self::DEFAULT_LIMIT;
+        $offset = (int)$this->argument('offset') ?: self::DEFAULT_OFFSET;
+        $limit = (int)$this->argument('limit') ?: self::DEFAULT_LIMIT;
 
         $this->processKeywords($offset, $limit);
 
@@ -54,10 +64,14 @@ class ReindexKeywordsInElastic extends Command
     }
 
     /**
+     * Add keywords in queue
+     *
      * @param int $offset
      * @param int $limit
+     *
+     * @return void
      */
-    private function processKeywords(int $offset, int $limit)
+    private function processKeywords(int $offset, int $limit): void
     {
         $keywordsCount = Keyword::count();
 
