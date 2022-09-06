@@ -53,7 +53,7 @@ class StopWord
 
                 $count++;
             } else {
-                $this->increaseKeywordCounter($keyword, true);
+                $this->increaseKeywordCounter($keyword);
             }
         }
 
