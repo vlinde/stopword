@@ -49,11 +49,11 @@ class StopWord
                 ->first();
 
             if (!$keyword) {
-                $this->generateNewKeyword($combination, $locale);
+                $this->generateNewKeyword($combination, $locale, true);
 
                 $count++;
             } else {
-                $this->increaseKeywordCounter($keyword);
+                $this->increaseKeywordCounter($keyword, true);
             }
         }
 
@@ -112,31 +112,31 @@ class StopWord
         string $combination,
         string $locale = null,
         bool $sync = false
-    ): Keyword
+    ): bool
     {
         $keyword = new Keyword();
         $keyword->key = $combination;
         $keyword->locale = $locale ?? '';
 
         if ($sync) {
-            return tap($keyword)->save();
+            return $keyword->save();
         }
 
         return Keyword::withoutSyncingToSearch(function () use ($keyword) {
-            return tap($keyword)->save();
+            return $keyword->save();
         });
     }
 
-    protected function increaseKeywordCounter(Keyword $keyword, bool $sync = false): Keyword
+    protected function increaseKeywordCounter(Keyword $keyword, bool $sync = false): bool
     {
         $keyword->counter += 1;
 
         if ($sync) {
-            return tap($keyword)->save();
+            return $keyword->save();
         }
 
         return Keyword::withoutSyncingToSearch(function () use ($keyword) {
-            return tap($keyword)->save();
+            return $keyword->save();
         });
     }
 }

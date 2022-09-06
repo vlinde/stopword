@@ -19,7 +19,6 @@ trait KeywordSearch
         return [
             'id' => $this->id,
             'key' => $this->key,
-            'key_suggest' => $this->key,
             'counter' => $this->counter,
             'locale' => $this->locale
         ];
