@@ -2,12 +2,12 @@
 
 namespace Vlinde\StopWord\Models\Traits\Keyword;
 
-use ElasticScoutDriverPlus\CustomSearch;
+use ElasticScoutDriverPlus\QueryDsl;
 use Laravel\Scout\Searchable;
 
 trait KeywordSearch
 {
-    use Searchable, CustomSearch;
+    use Searchable, QueryDsl;
 
     /**
      * Get the indexable data array for the model.

@@ -42,8 +42,8 @@ class ReindexKeywordsInElasticJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $keywords = Keyword::offset($this->skip)
-            ->limit($this->take)
+        $keywords = Keyword::skip($this->skip)
+            ->take($this->take)
             ->get();
 
         if ($keywords->isEmpty()) {
@@ -51,7 +51,7 @@ class ReindexKeywordsInElasticJob implements ShouldQueue
         }
 
         foreach ($keywords as $keyword) {
-            $keyword->touch();
+            $keyword->searchable();
         }
     }
 }

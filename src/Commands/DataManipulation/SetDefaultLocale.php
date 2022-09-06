@@ -12,24 +12,14 @@ class SetDefaultLocale extends Command
      *
      * @var string
      */
-    protected $signature = 'stopword:set:keyword:default:locale {locale?}';
+    protected $signature = 'stopword:set:keyword:default:locale {locale=de}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
-
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    protected $description = 'Set locale to keywords with empty locale';
 
     /**
      * Execute the console command.
@@ -40,10 +30,11 @@ class SetDefaultLocale extends Command
     {
         set_time_limit(1800);
 
-        $locale = $this->argument('locale') ?? 'de';
+        $locale = $this->argument('locale');
 
-        Keyword::where('locale', '=', '')
-            ->chunk(1000, function ($keywords) use ($locale) {
+        Keyword::select('id', 'locale')
+            ->where('locale', '=', '')
+            ->chunkById(1000, function ($keywords) use ($locale) {
                 foreach ($keywords as $key => $keyword) {
                     $keyword->locale = $locale;
                     $keyword->save();

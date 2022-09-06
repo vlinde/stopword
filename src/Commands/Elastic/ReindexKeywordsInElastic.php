@@ -8,9 +8,6 @@ use Vlinde\StopWord\Models\Keyword;
 
 class ReindexKeywordsInElastic extends Command
 {
-    private const DEFAULT_OFFSET = 0;
-    private const DEFAULT_LIMIT = 5000;
-
     /**
      * @var string
      */
@@ -26,7 +23,7 @@ class ReindexKeywordsInElastic extends Command
      *
      * @var string
      */
-    protected $signature = 'reindex:es:keywords {offset?} {limit?}';
+    protected $signature = 'reindex:es:keywords {offset=0} {limit=5000}';
 
     /**
      * The console command description.
@@ -55,12 +52,10 @@ class ReindexKeywordsInElastic extends Command
      */
     public function handle(): void
     {
-        $offset = (int)$this->argument('offset') ?: self::DEFAULT_OFFSET;
-        $limit = (int)$this->argument('limit') ?: self::DEFAULT_LIMIT;
+        $offset = (int)$this->argument('offset');
+        $limit = (int)$this->argument('limit');
 
         $this->processKeywords($offset, $limit);
-
-        $this->info('Operation finished');
     }
 
     /**

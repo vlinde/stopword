@@ -51,7 +51,7 @@ class KeywordsEsImportJob implements ShouldQueue
         }
 
         foreach ($keywords as $keyword) {
-            $keyword->touch();
+            $keyword->searchable();
         }
     }
 }

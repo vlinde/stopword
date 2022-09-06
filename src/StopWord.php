@@ -62,8 +62,8 @@ class StopWord
 
     protected function generateCleanCombinations(
         string $string,
-        $wordsLongerThan = 2,
-        $numberOfWords = 4,
+               $wordsLongerThan = 2,
+               $numberOfWords = 4,
         string $locale = null
     )
     {
