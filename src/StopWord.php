@@ -72,7 +72,11 @@ class StopWord
         $path = __DIR__ . '/../stopwords/' . $stopWordLocale . '.php';
 
         if (!file_exists($path)) {
-            return 0;
+            $path = __DIR__ . '/../stopwords/' . self::DEFAULT_LOCALE . '.php';
+
+            if (!file_exists($path)) {
+                return 0;
+            }
         }
 
         $charMap = require $path;
